@@ -1,0 +1,9 @@
+---
+commitizen:
+  major_version_zero: true
+  name: cz_conventional_commits
+  tag_format: v$version
+  pre_bump_hooks:
+  - prebump -t gradle $CZ_PRE_NEW_VERSION
+  version: 0.0.1
+  version_scheme: semver

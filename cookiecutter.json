@@ -1,0 +1,11 @@
+{
+  "project_name": "Spring Template",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-') }}",
+  "is_library": false,
+  "group_id": "cn.topfyf",
+  "artifact_id": "{{cookiecutter.project_slug}}",
+  "package": "{{cookiecutter.group_id}}.{{ cookiecutter.artifact_id.replace('-', '_') }}",
+  "package_dir": "{{ cookiecutter.package.replace('.', '/') }}",
+  "main_class": "{{ cookiecutter.project_name.replace(' ', '') }}Application",
+  "application_name": "{{cookiecutter.project_slug}}"
+}

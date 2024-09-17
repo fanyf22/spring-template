@@ -1,0 +1,120 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024. Philip Fan
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished
+ * to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+plugins {
+    id 'java'
+    // Maven publication plugin
+    id 'com.netflix.nebula.maven-publish' version '21.1.0'
+    id 'com.netflix.nebula.javadoc-jar' version '21.1.0'
+    id 'com.netflix.nebula.source-jar' version '21.1.0'
+    // Integration test plugin
+    id 'com.netflix.nebula.integtest' version '11.0.0'
+    // Spring Boot plugins
+    id 'org.springframework.boot' version '3.3.3'
+    id 'io.spring.dependency-management' version '1.1.6'
+}
+
+// Group name and version number
+group = 'cn.topfyf.auth'
+version = "1.0.0-a4"
+
+// Java language version
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+// Preserve parameter names for Spring request mappings
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << "-parameters"
+}
+
+// Repositories
+repositories {
+    mavenCentral()
+
+    maven {
+        url = project.findProperty('repo.url') + '/maven-public/'
+
+        credentials {
+            username = project.findProperty('repo.username')
+            password = project.findProperty('repo.password')
+        }
+    }
+}
+
+// Dependencies
+dependencies {
+    implementation 'cn.topfyf:common:0.11.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    runtimeOnly 'org.postgresql:postgresql'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testRuntimeOnly 'com.h2database:h2'
+}
+
+// Test configuration
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+
+        showExceptions true
+        exceptionFormat "full"
+        showCauses true
+        showStackTraces true
+
+        showStandardStreams = true
+    }
+}
+
+// JavaDoc configuration
+javadoc {
+    failOnError = false
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+// Publications
+publishing {
+    repositories {
+        maven {
+            url = project.findProperty('repo.url') + '/maven-releases/'
+
+            credentials {
+                username = project.findProperty('repo.username')
+                password = project.findProperty('repo.password')
+            }
+        }
+    }
+}

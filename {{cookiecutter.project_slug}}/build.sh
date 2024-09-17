@@ -74,7 +74,7 @@ printf "%s" "$REPO_USERNAME" > "$repo_username_file"
 printf "%s" "$REPO_PASSWORD" > "$repo_password_file"
 
 # Logging
-echo "$name: building the docker image"
+echo "$name: building docker image: $DOCKER_IMAGE"
 
 # Build the docker image
 docker build \
